@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String        @id @default(uuid())
+  email         String        @unique
+  passwordHash  String
+  name          String?
+  role          String        @default("USER") // USER | ADMIN
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  sessions      QuizSession[]
+  refreshTokens RefreshToken[]
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Category {
+  id        String          @id // e.g. "geographie"
+  label     String
+  icon      String
+  sortOrder Int             @default(0)
+  questions Question[]
+  topics    LearningTopic[]
+}
+
+model Question {
+  id             String          @id @default(uuid())
+  legacyId       String?         // old numeric/string ID for migration
+  categoryId     String
+  category       Category        @relation(fields: [categoryId], references: [id])
+  question       String
+  answer         String?         // deprecated field for old open questions
+  explanation    String
+  type           String          // qcm | multi | open | list
+  options        String          @default("[]") // JSON array of strings
+  correctAnswers String          @default("[]") // JSON array of strings
+  difficulty     String          @default("medium") // easy | medium | hard
+  tags           String          @default("[]") // JSON array of strings
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  sessionAnswers SessionAnswer[]
+}
+
+model LearningTopic {
+  id           String   @id @default(uuid())
+  categoryId   String
+  category     Category @relation(fields: [categoryId], references: [id])
+  title        String
+  icon         String
+  introduction String
+  sections     String   @default("[]") // JSON
+  keyFacts     String   @default("[]") // JSON
+  schema       String   @default("[]") // JSON
+  example      String
+  summary      String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model QuizSession {
+  id          String          @id @default(uuid())
+  userId      String
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date        DateTime        @default(now())
+  score       Int
+  total       Int
+  percentage  Int
+  duration    Int             // seconds
+  categories  String          @default("[]") // JSON array
+  replayCount Int             @default(0)
+  replayOfId  String?
+  answers     SessionAnswer[]
+}
+
+model SessionAnswer {
+  id         String      @id @default(uuid())
+  sessionId  String
+  session    QuizSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  questionId String
+  question   Question    @relation(fields: [questionId], references: [id])
+  userAnswer String      @default("[]") // JSON array
+  isCorrect  Boolean
+}
