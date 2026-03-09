@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add app.json index.ts package-lock.json package.json app/ data/ server/ store/ .claude/)"
+    ]
+  }
+}

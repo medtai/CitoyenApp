@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(lsof -ti :3000)",
+      "Bash(kill -9 62694)",
+      "Bash(npx tsc --noEmit)",
+      "Bash(grep -A 20 \"^  {$\")",
+      "Bash(grep -n \"category: ''\\\\\\(politique\\\\|institutions\\\\|europe\\\\|devoirs\\\\\\)''\" /Users/euriqa/Desktop/CitoyenApp/data/questions.ts)",
+      "Bash(grep -B2 \"category: ''\\\\\\(politique\\\\|institutions\\\\|europe\\\\|devoirs\\\\\\)''\" /Users/euriqa/Desktop/CitoyenApp/data/questions.ts)",
+      "Bash(sed 's/\\\\s*$//')",
+      "Bash(gh auth status)",
+      "Bash(gh repo create CitoyenApp --public --description \"Application mobile de préparation à l''entretien de naturalisation française\" --source=. --push)"
+    ]
+  }
+}
